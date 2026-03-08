@@ -1,0 +1,32 @@
+from sqlalchemy.orm import Session
+from app.models.product_model import Product
+from app.schemas.product_schema import ProductCreate, ProductUpdate
+from uuid import UUID
+
+class ProductRepository:
+
+    def create(self, db: Session, product_data: ProductCreate) -> Product:
+        product = Product(**product_data.dict())
+        db.add(product)
+        db.commit()
+        db.refresh(product)
+        return product
+
+    def get_by_id(self, db: Session, product_id: UUID) -> Product | None:
+        return db.query(Product).filter(Product.id == product_id).first()
+
+    def get_all(self, db: Session):
+        return db.query(Product).filter(Product.ativo == True)
+
+    def update(self, db: Session, product: Product, update_data: ProductUpdate):
+        for key, value in update_data.dict(exclude_unset=True).items():
+            setattr(product, key, value)
+
+        db.commit()
+        db.refresh(product)
+        return product
+
+    def delete(self, db: Session, product: Product):
+
+        product.ativo = False
+        db.commit()
