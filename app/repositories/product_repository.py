@@ -16,7 +16,7 @@ class ProductRepository:
         return db.query(Product).filter(Product.id == product_id).first()
 
     def get_all(self, db: Session):
-        return db.query(Product).filter(Product.ativo == True)
+        return db.query(Product).filter(Product.ativo == True).all()
 
     def update(self, db: Session, product: Product, update_data: ProductUpdate):
         for key, value in update_data.dict(exclude_unset=True).items():
