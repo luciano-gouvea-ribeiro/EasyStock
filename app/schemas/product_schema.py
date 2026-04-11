@@ -36,3 +36,6 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True
+
+class MovementRequest(BaseModel):
+    quantidade: int = Field(gt=0)

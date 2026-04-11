@@ -27,16 +27,20 @@ EasyStock
 │   │   └── database.py
 │   │
 │   ├── models
-│   │   └── product_model.py
+│   │   ├── product_model.py
+│   │   └── stock_model.py
 │   │
 │   ├── schemas
-│   │   └── product_schema.py
+│   │   ├── product_schema.py
+│   │   └── movement_schema.py
 │   │
 │   ├── repositories
-│   │   └── product_repository.py
+│   │   ├── product_repository.py
+│   │   └── stock_movement_repository.py
 │   │
 │   ├── services
-│   │   └── product_service.py
+│   │   ├── product_service.py
+│   │   └── stock_movement_service.py
 │   │
 │   └── routers
 │       └── product_router.py
@@ -126,22 +130,103 @@ http://localhost:8000/docs
 
 # Endpoints disponíveis
 
-### Produtos
+## Produtos
 
-| Método | Endpoint       | Descrição         |
-| ------ | -------------- | ----------------- |
-| POST   | v1/products      | Criar produto     |
-| GET    | v1/products      | Listar produtos   |
-| GET    | v1/products/{id} | Buscar produto    |
-| PUT    | v1/products/{id} | Atualizar produto |
-| DELETE | v1/products/{id} | Remover produto   |
+| Método | Endpoint              | Descrição         |
+| ------ | --------------------- | ----------------- |
+| POST   | /api/v1/products      | Criar produto     |
+| GET    | /api/v1/products      | Listar produtos   |
+| GET    | /api/v1/products/{id} | Buscar produto    |
+| PUT    | /api/v1/products/{id} | Atualizar produto |
+| DELETE | /api/v1/products/{id} | Remover produto   |
+
+---
+
+## Movimentação de Estoque (AC2)
+
+### Entrada de estoque
+
+| Método | Endpoint                             | Descrição                   |
+| ------ | ------------------------------------ | --------------------------- |
+| POST   | /api/v1/products/{product_id}/entrada | Adiciona estoque ao produto |
+
+Exemplo de body:
+
+```
+{
+  "quantidade": 10
+}
+```
+
+---
+
+### Saída de estoque
+
+| Método | Endpoint                           | Descrição                    |
+| ------ | ---------------------------------- | ---------------------------- |
+| POST   | /api/v1/products/{product_id}/saida | Remove estoque do produto    |
+
+Exemplo de body:
+
+```
+{
+  "quantidade": 5
+}
+```
 
 ---
 
 # Regra de Negócio
+
+## Produtos
 
 Produtos possuem o campo **ativo**.
 
 Produtos inativos não aparecem nas consultas da API.
 
 ---
+
+## Movimentação de Estoque
+
+- Quantidade deve ser maior que zero  
+- Produto deve existir  
+- Não é permitido saída com estoque insuficiente  
+- Toda movimentação é registrada no banco de dados  
+
+---
+
+# Banco de Dados
+
+### Tabela: products
+
+- Armazena os dados dos produtos  
+
+### Tabela: stock_movements
+
+- Armazena histórico de movimentações de estoque  
+- Tipos de movimentação:
+  - entrada
+  - saída  
+
+---
+
+# Testes realizados
+
+- Entrada de estoque ✔  
+- Saída de estoque ✔  
+- Validação de quantidade inválida ✔  
+- Validação de estoque insuficiente ✔  
+- Validação de UUID inválido ✔  
+
+---
+
+# Status do Projeto
+
+| Etapa | Status |
+|------|-------|
+| AC1 | ✅ Concluída |
+| AC2 | ✅ Concluída |
+| AC3 | 🔜 Em andamento |
+
+---
+
