@@ -25,8 +25,20 @@ class ProductRepository:
         db.commit()
         db.refresh(product)
         return product
+    
+    def get_by_name(self, db:Session, product_name: str):
+        return db.query(Product).filter(Product.nome.ilike(f"%{product_name}%")).filter(Product.ativo == True).all()
+    
+    def get_by_sku(self, db:Session, product_sku: str):
+        return db.query(Product).filter(Product.sku == product_sku).filter(Product.ativo == True).all()
 
     def delete(self, db: Session, product: Product):
 
         product.ativo = False
         db.commit()
+
+    def paginate_products(self, db:Session, page: int, limit: int):
+      offset = (page - 1) * limit
+      return db.query(Product).filter(Product.ativo == True).offset(offset).limit(limit).all()
+
+    

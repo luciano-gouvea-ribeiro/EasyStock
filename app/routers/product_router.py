@@ -1,39 +1,32 @@
 # app/routers/product_router.py
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from uuid import UUID
-
 from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse
 from app.services.product_service import ProductService
 from app.core.database import get_db
-from app.schemas.product_schema import MovementRequest
-from app.services.stock_movement_service import StockMovementService
-
+from typing import Optional
 
 router = APIRouter(prefix="/products", tags=["Products"])
 service = ProductService()
-stock_service = StockMovementService()
 
-@router.post("/{product_id}/entrada")
-def input_movement(product_id: UUID, movement: MovementRequest,db: Session = Depends(get_db)):
-    try:
-        return stock_service.input_movement(db, product_id, movement.quantidade)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-@router.post("/{product_id}/saida")
-def output_movement(product_id: UUID,movement: MovementRequest, db: Session = Depends(get_db)):
-    try:
-        return stock_service.output_movement(db,product_id,movement.quantidade)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    
 
 @router.post("/", response_model=ProductResponse)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     try:
         return service.create_product(db, product)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/paginated", response_model=list[ProductResponse])
+def paginate_product(
+    page: int = Query(1),
+    limit: int = Query(10),
+    db: Session = Depends(get_db)
+):
+    try:
+        return service.paginate_products(db, page, limit)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -47,8 +40,12 @@ def get_product(product_id: UUID, db: Session = Depends(get_db)):
 
 
 @router.get("/", response_model=list[ProductResponse])
-def list_products(db: Session = Depends(get_db)):
-    return service.list_products(db)
+def list_products(
+    product_name: Optional[str] = Query(None),
+    product_sku: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    return service.search_products(db, product_name, product_sku)
 
 
 @router.put("/{product_id}", response_model=ProductResponse)
