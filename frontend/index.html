@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyStock</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h1>EasyStock</h1>
+        <p>Sistema de gerenciamento de estoque</p>
+    </header>
+
+    <main class="container">
+
+        <section class="form-section">
+    <h2>Cadastrar Produto</h2>
+
+    <form id="productForm" class="product-form">
+        <input type="text" id="nome" placeholder="Nome do produto" required>
+        <input type="text" id="sku" placeholder="SKU" required>
+        <input type="text" id="codigo_barras" placeholder="Código de barras">
+
+        <input type="number" id="preco_custo" placeholder="Preço de custo" required>
+        <input type="number" id="preco_venda" placeholder="Preço de venda" required>
+
+        <input type="number" id="quantidade" placeholder="Quantidade" required>
+        <input type="number" id="estoque_minimo" placeholder="Estoque mínimo" required>
+        <input type="number" id="estoque_maximo" placeholder="Estoque máximo">
+
+        <button type="submit">Cadastrar Produto</button>
+    </form>
+</section>
+
+        <section class="search-section">
+
+            <input 
+                type="text"
+                id="searchInput"
+                placeholder="Buscar produto por nome..."
+            >
+
+            <button id="searchButton">
+                Buscar
+            </button>
+
+        </section>
+
+        <section class="products-section">
+
+            <h2>Produtos</h2>
+
+            <div id="productsContainer" class="products-container">
+
+            </div>
+
+        </section>
+
+        <section class="pagination-section">
+
+            <button id="prevPage">
+                Anterior
+            </button>
+
+            <span id="pageInfo">
+                Página 1
+            </span>
+
+            <button id="nextPage">
+                Próxima
+            </button>
+
+        </section>
+
+    </main>
+
+    <script src="./js/api.js"></script>
+
+</body>
+</html>
